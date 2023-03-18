@@ -12,4 +12,18 @@
         <module>performancetuning</module>
         <module>springlearning</module>
     </modules>
+
+    <properties>
+        <jol-core.version>0.17</jol-core.version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.openjdk.jol</groupId>
+                <artifactId>jol-core</artifactId>
+                <version>${jol-core.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 </project>

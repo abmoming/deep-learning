@@ -1,0 +1,7 @@
+pers\gym\spring\ResourceLoader.class
+pers\gym\spring\BeanDefinition.class
+pers\gym\spring\entity\UserDao.class
+pers\gym\Main.class
+pers\gym\spring\BeanRegister.class
+pers\gym\spring\BeanFactory.class
+pers\gym\spring\MiniSpringDemo.class

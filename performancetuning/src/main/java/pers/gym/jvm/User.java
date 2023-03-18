@@ -1,5 +1,7 @@
 package pers.gym.jvm;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * <p>user
  *
@@ -9,6 +11,14 @@ public class User {
 
     private Integer id;
     private String name;
+
+    public User() {
+    }
+
+    public User(Integer id, String name) {
+        this.id = id;
+        this.name = name;
+    }
 
     public Integer getId() {
         return id;
@@ -27,9 +37,13 @@ public class User {
     }
 
     @Override
-    protected void finalize() {
-        //OOMTest
-        System.out.println("关闭资源,user".concat(id.toString()).concat("即将被回收"));
+    protected synchronized void finalize() throws InterruptedException {
+
+        OOMTest.list.add(this);
+        TimeUnit.SECONDS.sleep(1);
+        if (!OOMTest.list.contains(this)) {
+            System.out.println("关闭资源,user".concat(id.toString()).concat("即将被回收"));
+        }
     }
 
     public void print() {

@@ -38,6 +38,7 @@ public class MyBreakClassLoaderTest {
                 if (c == null) {
 
                     long t0 = System.nanoTime();
+                    // 不是自定义路径名称的，得让它的父加载器去加载相关jar包
                     if (!name.startsWith("pers.gym.jvm")) {
                         c = this.getParent().loadClass(name);
                     } else {
@@ -67,12 +68,21 @@ public class MyBreakClassLoaderTest {
         }
 
         public static void main(String[] args) throws Exception {
-            MyBreakClassLoader myBreakClassLoaderTest = new MyBreakClassLoader("E:/test");
-            Class<?> clazz = myBreakClassLoaderTest.loadClass("pers.gym.jvm.User1");
+            MyBreakClassLoader myBreakClassLoader = new MyBreakClassLoader("E:/test");
+            Class<?> clazz = myBreakClassLoader.loadClass("pers.gym.jvm.User1");
             Object obj = clazz.newInstance();
             Method print = clazz.getDeclaredMethod("print", null);
             print.invoke(obj, null);
-            System.out.println(clazz.getClassLoader().getClass().getName());
+            // System.out.println(clazz.getClassLoader().getClass().getName());
+            System.out.println(clazz.getClassLoader());
+
+            // --------------------模拟tomcat的自定义类加载，每一个war都用的不同的类加载器
+            MyBreakClassLoader myBreakClassLoader1 = new MyBreakClassLoader("E:/test1");
+            Class<?> clazz1 = myBreakClassLoader1.loadClass("pers.gym.jvm.User1");
+            Object obj1 = clazz1.newInstance();
+            Method print1 = clazz1.getDeclaredMethod("print", null);
+            print1.invoke(obj1, null);
+            System.out.println(clazz1.getClassLoader());
         }
     }
 }
