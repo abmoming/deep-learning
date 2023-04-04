@@ -1,4 +1,4 @@
-package pers.gym.jvm.synchron;
+package pers.gym.lock;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -18,13 +18,13 @@ public class SynchronizedTest {
 
         ClassLock classLock = new ClassLock();
         new Thread(() -> {
-            // new ClassLock().test1();
-            classLock.test1();
+            new ClassLock().test1();
+            // classLock.test1();
         }).start();
 
         new Thread(() -> {
-            // new ClassLock().test2();
-            classLock.test2();
+            new ClassLock().test2();
+            // classLock.test2();
         }).start();
     }
 
@@ -39,7 +39,7 @@ class ClassLock {
     // public synchronized static void test1() {
     // public synchronized void test1() {
     public void test1() {
-        synchronized (ClassLock.class) {
+        synchronized (StaticLock.staticLock) {
             System.out.println(sdf.format(new Date()) + " " + Thread.currentThread().getName() + " begin...");
             try {
                 TimeUnit.SECONDS.sleep(1);
@@ -54,7 +54,7 @@ class ClassLock {
     // public synchronized static void test2() {
     // public synchronized void test2() {
     public void test2() {
-        synchronized (ClassLock.class) {
+        synchronized (StaticLock.staticLock) {
             System.out.println(sdf.format(new Date()) + " " + Thread.currentThread().getName() + " begin...");
             try {
                 TimeUnit.SECONDS.sleep(1);

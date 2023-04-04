@@ -11,6 +11,7 @@
     <modules>
         <module>performancetuning</module>
         <module>springlearning</module>
+        <module>javabase</module>
     </modules>
 
     <properties>
