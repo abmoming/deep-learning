@@ -67,12 +67,12 @@ public class ThreadPoolUtil {
         private final String name;
 
         public CustomThreadFactory(String name) {
-            this.name = "-" + name + "-" + threadNum.incrementAndGet();
+            this.name = name;
         }
 
         @Override
         public Thread newThread(Runnable r) {
-            Thread thread = new Thread(r, name);
+            Thread thread = new Thread(r, name + "-" + threadNum.getAndIncrement());
             // 当前线程是否守护线程，默认非守护线程(false)
             if (thread.isDaemon()) {
                 thread.setDaemon(true);

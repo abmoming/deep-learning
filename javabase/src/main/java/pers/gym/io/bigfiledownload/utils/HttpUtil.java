@@ -26,12 +26,12 @@ public class HttpUtil {
     public static HttpURLConnection getHttpUrlConn(String url, long start, long end) throws IOException {
 
         HttpURLConnection conn = getHttpUrlConn(url);
-        LogUtil.debug("{}线程下载内容区间: {}-{}", Thread.currentThread().getName(), start, end);
+        LogUtil.debug("线程下载内容区间: {}-{}", start, end == 0L ? "" : end);
         conn.setRequestProperty("RANGE", "bytes=" + start + "-" + (end == 0L ? "" : end));
         Map<String, List<String>> headerFields = conn.getHeaderFields();
-        if (LogUtil.DEBUG) {
+        if (LogUtil.debug) {
             headerFields.forEach((key, value) ->
-                    LogUtil.debug("{}线程相应请求头: {}-{}", Thread.currentThread().getName(), key, value));
+                    LogUtil.debug("线程相应请求头: {}-{}", key, value));
         }
         return conn;
     }

@@ -1,11 +1,11 @@
 package pers.gym.io.bigfiledownload.thread;
 
+import pers.gym.io.bigfiledownload.utils.CommonUtil;
 import pers.gym.io.bigfiledownload.utils.HttpUtil;
 import pers.gym.io.bigfiledownload.utils.LogUtil;
 
 import java.io.BufferedInputStream;
 import java.io.FileNotFoundException;
-import java.io.InputStream;
 import java.io.RandomAccessFile;
 import java.net.HttpURLConnection;
 import java.util.concurrent.Callable;
@@ -29,10 +29,6 @@ public class DownloadThread implements Callable<Boolean> {
     private Integer part;
     // 下载文件大小
     private Long downloadFileSize;
-    // 临时文件后缀
-    private static final String TEMP_FILE_SUFFIX = ".temp";
-    // 每次读取数据块大小
-    private static final byte[] BUFFER = new byte[1024 * 100];
 
     public DownloadThread() {
     }
@@ -53,19 +49,29 @@ public class DownloadThread implements Callable<Boolean> {
             throw new RuntimeException("文件下载路径有误!");
         }
         // 临时文件名
-        String tempFileName = fileName + TEMP_FILE_SUFFIX + part;
+        String tempFileName = CommonUtil.createTempFileName(fileName, part);
         // 临时文件大小
         long tempFileSize = HttpUtil.getLocalFileSize(tempFileName);
+        LogThread.LOCAL_FINISH_SIZE.addAndGet(tempFileSize);
+        if (tempFileSize >= lastSize - size) {
+            LogUtil.info("临时文件: {} 已经下载完毕，无需重复下载", tempFileName);
+            LogThread.DOWNLOAD_FINISH_THREAD.addAndGet(1);
+            return true;
+        }
         if (lastSize.compareTo(downloadFileSize) >= 0) {
             lastSize = 0L;
         }
         // size + tempFileSize：防止其中一个线程写临时文件时断掉了，重启任务时候能续写当前临时文件
+        // 1KB  0-20  1-20
         HttpURLConnection conn = HttpUtil.getHttpUrlConn(url, size + tempFileSize, lastSize);
         try(BufferedInputStream bis = new BufferedInputStream(conn.getInputStream());
             RandomAccessFile savedFile = new RandomAccessFile(tempFileName, "rw")) {
             int len;
-            while ((len = bis.read(BUFFER)) != -1) {
-                savedFile.write(BUFFER, 0, len);
+            final byte[] buffer = new byte[1024 * 100];
+            savedFile.seek(tempFileSize);
+            while ((len = bis.read(buffer)) != -1) {
+                savedFile.write(buffer, 0, len);
+                LogThread.LOCAL_DOWNLOAD_SIZE.addAndGet(len);
             }
         } catch (FileNotFoundException e) {
             LogUtil.error("要下载的文件路径不存在: {}", url);
@@ -76,6 +82,7 @@ public class DownloadThread implements Callable<Boolean> {
             return Boolean.FALSE;
         } finally {
             conn.disconnect();
+            LogThread.DOWNLOAD_FINISH_THREAD.addAndGet(1);
         }
 
         return true;

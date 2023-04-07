@@ -1,14 +1,10 @@
 package pers.gym.io;
 
-import sun.misc.ClassLoaderUtil;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Objects;
+import java.util.concurrent.ExecutionException;
 
 /**
  * <p>InputStreamDemo
@@ -17,7 +13,7 @@ import java.util.Objects;
  */
 public class InputStreamDemo {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws ExecutionException, InterruptedException {
 
         final String PATH = Objects.requireNonNull(InputStreamDemo.class.getClassLoader().getResource("")).getPath();
         String FILE_PATH = PATH + "input.txt";

@@ -11,12 +11,12 @@ import java.util.Arrays;
  */
 public class LogUtil {
 
-    public static final boolean DEBUG = false;
+    public static boolean debug = false;
 
     public static final DateTimeFormatter TIME_MATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss:SSS");
 
     public static void debug(String msg, Object... args) {
-        if (DEBUG) {
+        if (debug) {
             print(msg, "-DEBUG-", args);
         }
     }

@@ -1,10 +1,7 @@
 package pers.gym.io.bigfiledownload.thread;
 
-import jdk.management.resource.internal.inst.SocketOutputStreamRMHooks;
-import pers.gym.io.bigfiledownload.DownloadMain;
-import pers.gym.io.bigfiledownload.utils.ThreadPoolUtil;
+import pers.gym.io.bigfiledownload.DownloadService;
 
-import java.util.Arrays;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
@@ -25,7 +22,7 @@ public class LogThread implements Callable<Boolean> {
     // 下载完成线程
     public static AtomicLong DOWNLOAD_FINISH_THREAD = new AtomicLong();
     // 默认下载线程数量5
-    private static final int[] DOWNLOAD_THREAD_ARR = new int[5];
+    // private static final int[] DOWNLOAD_THREAD_ARR = new int[5];
     // 1MB大小
     private static final double mb = 1024d * 1024d;
     // 1KB大小
@@ -45,7 +42,7 @@ public class LogThread implements Callable<Boolean> {
         // 文件总大小
         String downloadFileMBSize = String.format("%.1f", downloadFileSize / mb);
         // 下载完成线程数 >= 线程池设定的核心线程数
-        while (DOWNLOAD_FINISH_THREAD.get() >= DownloadMain.POOL_SIZE) {
+        while (DOWNLOAD_FINISH_THREAD.get() < DownloadService.POOL_SIZE) {
             ++indexOf;
             /*// 当前线程下载大小 = 当前已下载大小 - 之前的下载大小
             long downloadSize = LOCAL_DOWNLOAD_SIZE.get();
@@ -57,6 +54,9 @@ public class LogThread implements Callable<Boolean> {
             // long surplusSize = downloadFileSize - LOCAL_DOWNLOAD_SIZE.get() - LOCAL_FINISH_SIZE.get();
             long surplusSize = downloadFileSize - LOCAL_DOWNLOAD_SIZE.get();
             String surplusTime = String.format("%.1f", surplusSize / kb / Double.parseDouble(speed));
+            if ("Infinity".equals(surplusTime)) {
+                surplusTime = "-";
+            }
             // 已下载大小
             String currentFileSize = String.format("%.2f",
                     longConvertDouble(LOCAL_DOWNLOAD_SIZE.get()) / mb
