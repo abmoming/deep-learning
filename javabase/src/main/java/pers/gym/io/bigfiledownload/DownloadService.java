@@ -50,6 +50,7 @@ public class DownloadService {
         // 这里可以增加一个下载地址
         final String fileName = HttpUtil.getHttpFileName(url);
         final String fullAddress = localAddress + fileName;
+        boolean threadStatus = false;
         mkDirs(localAddress);
         long localFileSize = HttpUtil.getLocalFileSize(fullAddress);
         long downloadFileSize = HttpUtil.getDownloadFileSize(url);
@@ -70,20 +71,34 @@ public class DownloadService {
         downloadTaskFragment(url, fullAddress, futures, downloadFileSize);
         LogThread logThread = new LogThread(downloadFileSize);
         futures.add(THREAD_POOL.submit(logThread));
-        for (Future<Boolean> future : futures) {
+        for (int i = 0; i < futures.size(); i++) {
             try {
-                future.get();
+                // 如果是日志线程可以直接跳出，因为日志线程是在数组最后一个
+                if (i == futures.size() - 1) {
+                    break;
+                }
+                threadStatus = futures.get(i).get();
             } catch (InterruptedException e) {
                 LogUtil.error("线程中断异常: {}", e.getMessage());
             } catch (ExecutionException e) {
                 LogUtil.error("线程执行异常: {}", e.getMessage());
             }
         }
+        if (!threadStatus) {
+            LogUtil.error("本次文件: {} 下载失败, 请创建指定目录: {} 再重新下载", fileName, localAddress);
+            THREAD_POOL.shutdown();
+            return;
+        }
+        LogUtil.info("文件下载完毕: {}, 本次下载耗时: {}", fileName, (System.currentTimeMillis() - startTime) / 1000 + "s");
+        LogUtil.info("结束下载时间: {}", LocalDateTime.now().format(LogUtil.TIME_MATTER));
         THREAD_POOL.shutdown();
         boolean merge = mergeFile(fullAddress);
         if (merge) {
             // 删除文件 TODO
+            clearTempFile(fullAddress);
         }
+        LogUtil.info("本次文件: {} 下载结束", fileName);
+        System.exit(0);
     }
 
     /**
@@ -162,5 +177,21 @@ public class DownloadService {
         if (!file.exists()) {
             file.mkdirs();
         }
+    }
+
+    /**
+     * 删除临时文件
+     *
+     * @param localAddress 临时文件存储地址
+     */
+    @SuppressWarnings("all")
+    public void clearTempFile(String localAddress) {
+        LogUtil.info("开始删除临时文件");
+        File tempFile;
+        for (int i = 0; i < THREAD_POOL.getCorePoolSize(); i++) {
+            tempFile = new File(CommonUtil.createTempFileName(localAddress, i));
+            tempFile.delete();
+        }
+        LogUtil.info("删除临时文件结束");
     }
 }

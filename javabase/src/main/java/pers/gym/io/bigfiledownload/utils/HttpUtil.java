@@ -29,10 +29,10 @@ public class HttpUtil {
         LogUtil.debug("线程下载内容区间: {}-{}", start, end == 0L ? "" : end);
         conn.setRequestProperty("RANGE", "bytes=" + start + "-" + (end == 0L ? "" : end));
         Map<String, List<String>> headerFields = conn.getHeaderFields();
-        if (LogUtil.debug) {
+        /*if (LogUtil.debug) {
             headerFields.forEach((key, value) ->
                     LogUtil.debug("线程相应请求头: {}-{}", key, value));
-        }
+        }*/
         return conn;
     }
 
@@ -83,5 +83,15 @@ public class HttpUtil {
         int addOne = 1;
         int index = url.lastIndexOf("/");
         return url.substring(index + addOne);
+    }
+
+    /**
+     * 获取本地文件下载地址
+     *
+     * @param fileName 本地文件下载全地址
+     * @return String
+     */
+    public static String getLocalUrl(String fileName) {
+        return fileName.substring(0, fileName.lastIndexOf("/") + 1);
     }
 }

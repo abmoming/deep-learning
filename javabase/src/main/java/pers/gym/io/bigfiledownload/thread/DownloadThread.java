@@ -62,7 +62,6 @@ public class DownloadThread implements Callable<Boolean> {
             lastSize = 0L;
         }
         // size + tempFileSize：防止其中一个线程写临时文件时断掉了，重启任务时候能续写当前临时文件
-        // 1KB  0-20  1-20
         HttpURLConnection conn = HttpUtil.getHttpUrlConn(url, size + tempFileSize, lastSize);
         try(BufferedInputStream bis = new BufferedInputStream(conn.getInputStream());
             RandomAccessFile savedFile = new RandomAccessFile(tempFileName, "rw")) {
@@ -74,7 +73,7 @@ public class DownloadThread implements Callable<Boolean> {
                 LogThread.LOCAL_DOWNLOAD_SIZE.addAndGet(len);
             }
         } catch (FileNotFoundException e) {
-            LogUtil.error("要下载的文件路径不存在: {}", url);
+            LogUtil.error("要下载的本地文件路径不存在: {}", HttpUtil.getLocalUrl(fileName));
             return Boolean.FALSE;
         } catch (Exception e) {
             LogUtil.error("下载出现异常: {}", e.getMessage());
@@ -82,7 +81,7 @@ public class DownloadThread implements Callable<Boolean> {
             return Boolean.FALSE;
         } finally {
             conn.disconnect();
-            LogThread.DOWNLOAD_FINISH_THREAD.addAndGet(1);
+            LogThread.DOWNLOAD_FINISH_THREAD.getAndIncrement();
         }
 
         return true;
