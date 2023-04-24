@@ -36,10 +36,13 @@ public class VolatileAtomicityDemo {
         }
     }*/
 
+    // volatile static boolean flag = true;
+    volatile static boolean flag = true;
+
     public static void main(String[] args) throws InterruptedException {
         VolatileAtomicityDemo volatileAtomicityDemo = new VolatileAtomicityDemo();
         ExecutorService pool = Executors.newFixedThreadPool(5);
-        for (int i = 0; i < 5; i++) {
+        /*for (int i = 0; i < 5; i++) {
             pool.execute(() -> {
                 for (int j = 0; j < 500; j++) {
                     volatileAtomicityDemo.increase();
@@ -49,6 +52,17 @@ public class VolatileAtomicityDemo {
         // 休息1.5秒，保证上面程序执行完成
         Thread.sleep(1500);
         System.out.println(inc);
+        pool.shutdown();*/
+
+        int i = 0;
+        while (i < 20) {
+            if (i == 19) {
+                // flag = false;
+            }
+            int finalI = i;
+            pool.execute(() -> System.out.println("当前线程-" + finalI + "-"+flag));
+            i++;
+        }
         pool.shutdown();
     }
 }

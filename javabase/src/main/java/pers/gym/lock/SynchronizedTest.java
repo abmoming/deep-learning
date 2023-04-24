@@ -18,13 +18,15 @@ public class SynchronizedTest {
 
         ClassLock classLock = new ClassLock();
         new Thread(() -> {
-            new ClassLock().test1();
+            // new ClassLock().test1();
             // classLock.test1();
+            classLock.test3();
         }).start();
 
         new Thread(() -> {
-            new ClassLock().test2();
+            // new ClassLock().test2();
             // classLock.test2();
+            classLock.test4();
         }).start();
     }
 
@@ -64,8 +66,31 @@ class ClassLock {
             System.out.println(sdf.format(new Date()) + " " + Thread.currentThread().getName() + " end...");
         }
     }
+
+    // 同一个实例对象调用test3和test4不会互斥
+    // test3用的是对象锁 test4用的是类锁 是允许的，不会发生互斥现象
+    public synchronized void test3() {
+        System.out.println(sdf.format(new Date()) + " " + Thread.currentThread().getName() + " begin...");
+        try {
+            TimeUnit.SECONDS.sleep(1);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        System.out.println(sdf.format(new Date()) + " " + Thread.currentThread().getName() + " end...");
+    }
+
+    public static synchronized void test4() {
+        System.out.println(sdf.format(new Date()) + " " + Thread.currentThread().getName() + " begin...");
+        try {
+            TimeUnit.SECONDS.sleep(1);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        System.out.println(sdf.format(new Date()) + " " + Thread.currentThread().getName() + " end...");
+    }
+
 }
 
-class StaticLock{
+class StaticLock {
     static final Object staticLock = new Object();
 }
