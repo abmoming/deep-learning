@@ -22,7 +22,8 @@ public class Demo2 {
 
 class Moming extends Thread {
 
-    private boolean flag = false;
+    // 测试可去掉volatile
+    private volatile boolean flag = false;
 
     public boolean isFlag() {
         return flag;

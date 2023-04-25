@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: eureka-server
+server:
+  port: 1112
+eureka:
+  instance:
+    hostname: eurekaServerA
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      # 填写注册中心的地址，多个用逗号隔开
+      defaultZone: http://eurekaB:1113/eureka

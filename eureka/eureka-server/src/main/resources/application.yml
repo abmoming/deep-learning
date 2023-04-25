@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: eureka-server
+server:
+  port: 3000
+eureka:
+  instance:
+    hostname: eurekaServer
+  client:
+    # eureka有两种身份：1注册中心 2普通服务；true：需要注册到注册中心(普通服务) false：当前项目不需要注册(注册中心)
+    # 默认为true
+    register-with-eureka: false
+    # 是否从eureka server上获取注册信息(默认true)
+    fetch-registry: false
+    # 服务端一定要重写(非集群下可以写自己本身地址)，否则会一直报：Connect to localhost:8761 timed out
+    service-url:
+      defaultZone: http://localhost:3000/eureka
