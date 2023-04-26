@@ -1,1 +1,3 @@
-- eureka-server：eureka服务端，端口1111
+- eureka-server：eureka服务端，端口3000
+- eureka-provider：服务提供者，端口3100
+- eureka-consumer：服务消费者，消费服务提供的接口，端口3200

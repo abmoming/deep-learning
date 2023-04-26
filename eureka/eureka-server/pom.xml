@@ -28,7 +28,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <mainClass>pers.gym.eurekaserver.EurekaServerApplication</mainClass>
+                    <mainClass>pers.gym.server.EurekaServerApplication</mainClass>
                 </configuration>
                 <executions>
                     <execution>

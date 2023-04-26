@@ -7,9 +7,9 @@
         <artifactId>eureka</artifactId>
         <version>1.0-deep-learning</version>
     </parent>
-    <artifactId>eureka-provider</artifactId>
-    <name>eureka-provider</name>
-    <description>eureka-provider</description>
+    <artifactId>eureka-consumer</artifactId>
+    <name>eureka-consumer</name>
+    <description>eureka-consumer</description>
 
     <dependencies>
         <dependency>
@@ -28,7 +28,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <mainClass>pers.gym.provider.EurekaProviderApplication</mainClass>
+                    <mainClass>pers.gym.consumer.EurekaConsumerApplication</mainClass>
                 </configuration>
                 <executions>
                     <execution>
