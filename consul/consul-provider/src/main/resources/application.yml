@@ -1,0 +1,15 @@
+server:
+  port: 3300
+spring:
+  application:
+    name: consul-provider
+  cloud:
+    consul:
+      host: 120.76.40.117
+      port: 8500
+      discovery:
+        # 发现服务的名称
+        service-name: ${spring.application.name}
+        # 开启检查心跳协议，默认是关闭(在ui端就看见是红叉)
+        heartbeat:
+          enabled: true
