@@ -5,6 +5,7 @@ server:
   port: 1112
 eureka:
   instance:
+    # 在etc文件夹下的host文件做了映射
     hostname: eurekaServerA
   client:
     register-with-eureka: true

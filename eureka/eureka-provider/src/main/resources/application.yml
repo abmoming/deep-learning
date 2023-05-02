@@ -5,7 +5,7 @@ server:
   port: 3100
 eureka:
   instance:
-    hostname: eurekaProvider
+    hostname: localhost
   client:
     service-url:
       defaultZone: http://localhost:3000/eureka

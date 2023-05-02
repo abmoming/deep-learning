@@ -1,11 +1,13 @@
 package pers.gym.consumer.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -28,6 +30,13 @@ public class ConsumerController {
 
     @Autowired
     private DiscoveryClient discoveryClient;
+    @Autowired
+    @Qualifier("restTemplateOne")
+    private RestTemplate restTemplateOne;
+
+    @Autowired
+    @Qualifier("restTemplateTwo")
+    private RestTemplate restTemplateTwo;
 
     private static final AtomicInteger incr = new AtomicInteger();
 
@@ -47,9 +56,28 @@ public class ConsumerController {
             return "没有Provider服务可用";
         }
         ServiceInstance instance = instances.get(incr.getAndIncrement() % instances.size());
-        String host = Objects.requireNonNull(instance.getInstanceId()).split(":")[0];
-        String url = "http://" + host + ":" + instance.getPort() + "/provider/list-provider";
+        String url = "http://" + instance.getHost() + ":" + instance.getPort() + "/provider/list-provider";
         return getHttpResponseContent(url);
+    }
+
+    @GetMapping("/rest-template")
+    public String restTemplate() {
+
+        List<ServiceInstance> instances = discoveryClient.getInstances("EUREKA-PROVIDER");
+        if (instances == null || instances.size() == 0) {
+            return "没有Provider服务可用";
+        }
+        ServiceInstance instance = instances.get(incr.getAndIncrement() % instances.size());
+        String url = "http://" + instance.getHost() + ":" + instance.getPort() + "/provider/list-provider";
+        return restTemplateOne.getForObject(url, String.class);
+    }
+
+    @GetMapping("/rest-template-load-balance")
+    public String restTemplateLoadBalance() {
+
+        // 应用程序名称
+        final String serviceName = "EUREKA-PROVIDER";
+        return restTemplateTwo.getForObject("http://" + serviceName + "/provider/list-provider", String.class);
     }
 
     public String getHttpResponseContent(String urlStr) {

@@ -10,7 +10,7 @@
     <version>1.0-deep-learning</version>
     <modules>
         <module>performancetuning</module>
-        <module>springlearning</module>
+        <module>spring</module>
         <module>javabase</module>
         <module>eureka</module>
     </modules>
