@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: hystrix
+server:
+  port: 3500
+eureka:
+  instance:
+    hostname: localhost
+  client:
+    service-url:
+      defaultZone: http://localhost:3000/eureka
